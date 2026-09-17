@@ -11,6 +11,7 @@ COPY --from=dockercli /usr/local/bin/docker /usr/local/bin/docker
 WORKDIR /app
 RUN mkdir -p /app/data && chown -R app:app /app/data
 COPY --from=build /build/target/*.jar app.jar
+RUN chmod 0444 /app/app.jar
 USER app
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=60 -XX:+ExitOnOutOfMemoryError"
 ENTRYPOINT ["java","-jar","/app/app.jar"]

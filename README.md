@@ -59,7 +59,7 @@ The first worker implementation processes one task at a time per instance; it is
 
 ## Implementation status
 
-Local Java tests: **15 passed** on 2026-09-18, using the explicit H2 test profile. This is not PostgreSQL/Supabase, Docker or NAS acceptance. Four-project data isolation is configured; real project credentials and NAS login are still required for deployment. Public GitHub publication remains pending.
+Validated on 2026-09-18: **15 local Java tests passed**; this service is deployed on a Linux x86_64 Docker host and connected to its designated managed Supabase database. The integrated positive and deliberate assertion-failure flows have been exercised with actual Playwright containers, private Storage artifacts and cleanup. Model generation remains explicitly **mock**; a real provider is not yet configured. See `docs/validation.md` for boundaries. GitHub publication remains pending.
 
 ## Java development
 
