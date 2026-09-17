@@ -1,0 +1,1 @@
+{"name":"ai-sdlc-playwright-runner","version":"0.1.0","private":true,"type":"module","scripts":{"start":"node run.mjs","test":"node --test test/*.test.mjs"},"dependencies":{"playwright":"1.63.0"},"engines":{"node":">=22"}}

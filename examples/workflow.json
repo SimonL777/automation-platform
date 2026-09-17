@@ -1,0 +1,1 @@
+{"version":1,"target":"todo-demo","steps":[{"op":"fill","target":"title","value":"Prepare interview"},{"op":"click","target":"add","value":null},{"op":"assertText","target":"items","value":"Prepare interview"}]}

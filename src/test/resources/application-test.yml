@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:automationplatform;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ''
+app:
+  api-token: test-operator-token-not-for-deployment
+  service-token: test-service-token-not-for-deployment
+  artifact-mode: local
+  artifact-dir: ${java.io.tmpdir}/automation-platform-test-artifacts
+  worker-enabled: false

@@ -1,0 +1,45 @@
+server:
+  port: ${PORT:8083}
+  error:
+    include-message: never
+spring:
+  application:
+    name: automation-platform
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 0
+      connection-timeout: 15000
+  flyway:
+    schemas: ${DB_SCHEMA:automation_platform}
+    default-schema: ${DB_SCHEMA:automation_platform}
+  mvc:
+    async:
+      request-timeout: 65000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+app:
+  schema: ${DB_SCHEMA:automation_platform}
+  api-token: ${API_TOKEN:}
+  service-token: ${SERVICE_TOKEN:}
+  jwt-issuer: ${SUPABASE_JWT_ISSUER:}
+  jwt-jwks: ${SUPABASE_JWKS_URL:}
+  jwt-audience: authenticated
+  artifact-mode: ${ARTIFACT_MODE:supabase}
+  artifact-dir: ${ARTIFACT_DIR:./data/artifacts}
+  supabase-url: ${SUPABASE_URL:}
+  supabase-service-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+  storage-bucket: ${STORAGE_BUCKET:automation-platform-artifacts}
+  worker-enabled: ${WORKER_ENABLED:true}
+automation:
+  model-url: ${MODEL_GATEWAY_URL:http://localhost:8082}
+  sandbox-url: ${SANDBOX_GATEWAY_URL:http://localhost:8081}
+  model-token: ${MODEL_SERVICE_TOKEN:}
+  sandbox-token: ${SANDBOX_SERVICE_TOKEN:}
+  git-repositories: '${GIT_REPOSITORIES_JSON:}'

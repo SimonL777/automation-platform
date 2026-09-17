@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {validate,compile,specHash} from '../contract.mjs';
+const workflow=value=>({version:1,target:'todo-demo',steps:[{op:'fill',target:'title',value},{op:'click',target:'add',value:null},{op:'assertText',target:'items',value}]});
+test('deterministic compilation quotes values instead of executing them',()=>{const w=workflow('x"; process.exit(); //');const spec=compile(w);assert.equal(spec,compile(w));assert.equal(spec.split('\n').filter(x=>x.startsWith('await ')).length,3);assert.match(spec,/x\\";/);assert.match(specHash(w),/^[a-f0-9]{64}$/);});
+test('unknown operations, targets and missing assertions fail closed',()=>{assert.throws(()=>validate({...workflow('x'),steps:[{op:'eval',target:'items',value:'evil'}]}));assert.throws(()=>validate({...workflow('x'),steps:[{op:'click',target:'add'}]}));assert.throws(()=>validate({...workflow('x'),target:'https://internal.example'}));});
