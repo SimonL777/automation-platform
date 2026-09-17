@@ -1,5 +1,9 @@
 # Automation Platform
 
+[![CI](https://github.com/SimonL777/automation-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/SimonL777/automation-platform/actions/workflows/ci.yml)
+
+[sandbox-gateway](https://github.com/SimonL777/sandbox-gateway) · [model-gateway](https://github.com/SimonL777/model-gateway) · [automation-platform](https://github.com/SimonL777/automation-platform) · [ai-sdlc](https://github.com/SimonL777/ai-sdlc)
+
 A Java automation delivery service: requirement → validated Workflow → deterministic Spec → Sandbox execution → report, with optional asynchronous Git source snapshots.
 
 ## Scope
@@ -59,7 +63,7 @@ The first worker implementation processes one task at a time per instance; it is
 
 ## Implementation status
 
-Validated on 2026-09-18: **15 local Java tests passed**; this service is deployed on a Linux x86_64 Docker host and connected to its designated managed Supabase database. The integrated positive and deliberate assertion-failure flows have been exercised with actual Playwright containers, private Storage artifacts and cleanup. Model generation remains explicitly **mock**; a real provider is not yet configured. See `docs/validation.md` for boundaries. GitHub publication remains pending.
+Validated on 2026-09-18: **15 local Java tests passed**; this service is deployed on a Linux x86_64 Docker host and connected to its designated managed Supabase database. The integrated positive and deliberate assertion-failure flows have been exercised with actual Playwright containers, private Storage artifacts and cleanup. Model generation remains explicitly **mock**; a real provider is not yet configured. See `docs/validation.md` for boundaries. Real-provider acceptance remains separate from the validated mock-model flow.
 
 ## Java development
 
