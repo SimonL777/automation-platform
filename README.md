@@ -59,7 +59,7 @@ The first worker implementation processes one task at a time per instance; it is
 
 ## Implementation status
 
-Initial source is written. Build/test execution, live PostgreSQL/Supabase checks, browser verification, Docker/NAS deployment and public release have **not** been accepted yet. Test sources and smoke scripts are supplied for the next validation phase. Do not treat a README example as runtime evidence.
+Local Java tests: **15 passed** on 2026-09-18, using the explicit H2 test profile. This is not PostgreSQL/Supabase, Docker or NAS acceptance. Four-project data isolation is configured; real project credentials and NAS login are still required for deployment. Public GitHub publication remains pending.
 
 ## Java development
 
@@ -85,7 +85,7 @@ Tests cover idempotency, ownership, concurrent claiming, cancelled/stale complet
 
 ## Integrated NAS deployment
 
-Keep the four projects as siblings and use `ai-sdlc/examples/stack/`. Supabase remains the shared infrastructure provider; each repository owns its own schema and API. Only the workbench reverse proxy is host-published. The integration README separates mock-model, real-provider, local-development and Supabase modes.
+Keep the four projects as siblings and use `ai-sdlc/examples/stack/`. Use a separate Supabase project for each platform; the integration configuration keeps their database and privileged credentials separate. Only the workbench reverse proxy is host-published. The integration README separates mock-model, real-provider, local-development and Supabase modes.
 
 ## License
 
