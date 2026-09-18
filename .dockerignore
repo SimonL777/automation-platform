@@ -1,6 +1,6 @@
 .git
 target/*
-!target/*-0.1.0.jar
+!target/*-0.2.0.jar
 node_modules
 .env
 data

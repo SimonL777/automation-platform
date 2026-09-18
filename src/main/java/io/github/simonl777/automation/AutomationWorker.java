@@ -16,17 +16,18 @@ public class AutomationWorker {
   var job=jobs.claim(Duration.ofMinutes(6));if(job==null)return;
   try{
    JsonNode payload=Json.read(job.payload());
+   if(payload.path("kind").asText().equals("studio")){runStudio(job,payload);return;}
    if(payload.path("kind").asText().equals("git")){var result=git.checkout(payload.path("repositoryKey").asText(),payload.path("ref").asText());artifacts.putText(job.owner(),job.id(),"repository.json",Json.write(result));jobs.finish(job,"SUCCEEDED",result,null);return;}
    RunRequest request=Json.decode(payload.path("request").toString(),RunRequest.class).validate(git);
-   Map<String,Object> result=new LinkedHashMap<>();result.put("workspaceId",request.workspaceId());
+   Map<String,Object> result=new LinkedHashMap<>();result.put("workspaceId",request.workspaceId());result.put("caseId",request.caseId());result.put("title",request.title());
    if(request.repositoryKey()!=null&&!request.repositoryKey().isBlank()){var source=git.checkout(request.repositoryKey(),request.ref()==null?"main":request.ref());result.put("repository",source);artifacts.putText(job.owner(),job.id(),"repository.json",Json.write(source));}
    Workflow workflow=request.workflow();
    if(workflow==null){JsonNode generated=dependencies.plan(job.owner(),request.requirement());workflow=Json.decode(generated.path("workflow").toString(),Workflow.class).validate();result.put("modelRequestId",generated.path("requestId").asText());result.put("providerMode",generated.path("providerMode").asText());}
    else result.put("providerMode","not-used");
-   String spec=workflow.compile();result.put("workflowHash",workflow.hash());result.put("specHash",Json.hash(spec));result.put("compilerVersion","0.1.0");result.put("workflow",workflow);
+   String spec=workflow.compile();result.put("workflowHash",workflow.hash());result.put("specHash",Json.hash(spec));result.put("compilerVersion",workflow.compilerVersion());result.put("workflow",workflow);
    artifacts.putText(job.owner(),job.id(),"workflow.json",Json.write(workflow));artifacts.putText(job.owner(),job.id(),"spec.js",spec);
    if(!jobs.active(job))return;
-   JsonNode execution=dependencies.submit(job.owner(),job.id(),Map.of("workload","playwright-demo","workflow",workflow,"timeoutSeconds",60));String executionId=execution.path("id").asText();
+   JsonNode execution=dependencies.submit(job.owner(),job.id(),Map.of("workload",workflow.channel().equals("API")?"api-test":"web-test","workflow",workflow,"timeoutSeconds",60));String executionId=execution.path("id").asText();
    if(!jobs.attach(job,executionId)){dependencies.cancel(job.owner(),executionId);return;}
    long deadline=System.nanoTime()+Duration.ofSeconds(180).toNanos();
    while(true){
@@ -42,4 +43,20 @@ public class AutomationWorker {
   }catch(ApiFailure e){jobs.finish(job,e.status==504?"TIMED_OUT":"FAILED",null,e.code);}
   catch(Exception e){jobs.finish(job,"FAILED",null,"AUTOMATION_FAILED");}
  }
+ private void runStudio(Jobs.Job job,JsonNode payload){
+  StudioRequest req=Json.decode(payload.path("request").toString(),StudioRequest.class).validate();
+  artifacts.putText(job.owner(),job.id(),"input.md",req.markdown());
+  if(req.source()!=null&&!req.source().isBlank())artifacts.putText(job.owner(),job.id(),"source.txt",req.source());
+  JsonNode response=dependencies.capability(job.owner(),req);Map<String,Object> result=Json.MAPPER.convertValue(response,Map.class);
+  if(req.capability().equals("ai-cr")){
+   result.put("_meta",Map.of("contract","dd-open/v1","inputHash",Json.hash(Json.canonical(req)),"requirementHash",Json.hash(req.markdown()),"sourceHash",Json.hash(Objects.toString(req.source(),"")),"mode","review"));
+   result.put("degraded_capabilities",List.of("AICR baseline not supplied","No repository-wide tool exploration in Markdown/source mode"));
+   result.put("coverage",Map.of("requirementSource","input.md","fullFeatureSourceProvided",req.source()!=null&&!req.source().isBlank(),"baseSourceProvided",req.baseSource()!=null&&!req.baseSource().isBlank()));
+   artifacts.putText(job.owner(),job.id(),"defect_detector_output.json",Json.write(result));
+  }
+  if(req.capability().equals("case-compile")){Workflow w=Json.decode(response.path("workflow").toString(),Workflow.class).validate();result.put("spec",w.compile());result.put("specHash",Json.hash(w.compile()));result.put("workflowHash",w.hash());result.put("compilerVersion",w.compilerVersion());artifacts.putText(job.owner(),job.id(),"workflow.json",Json.write(w));artifacts.putText(job.owner(),job.id(),"spec.js",w.compile());}
+  artifacts.putText(job.owner(),job.id(),"output.md",response.path("markdown").asText());artifacts.putText(job.owner(),job.id(),"result.json",Json.write(result));
+  result.put("artifacts",req.capability().equals("case-compile")?List.of("input.md","output.md","workflow.json","spec.js","result.json"):(req.capability().equals("ai-cr")?List.of("input.md","output.md","defect_detector_output.json","result.json"):List.of("input.md","output.md","result.json")));jobs.finish(job,"SUCCEEDED",result,null);
+ }
+
 }

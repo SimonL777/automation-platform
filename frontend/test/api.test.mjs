@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {terminal,newId,request} from '../src/api.js';
+test('terminal state and UUID on LAN HTTP',()=>{assert.equal(terminal('LOST'),true);assert.equal(terminal('RUNNING'),false);assert.match(newId({getRandomValues:b=>b.fill(1)}),/^[a-f0-9-]{36}$/);});
+test('request carries owner credential and idempotency key',async()=>{const old=globalThis.fetch;try{globalThis.fetch=async(u,o)=>{assert.equal(o.headers.Authorization,'Bearer token');assert.equal(o.headers['Idempotency-Key'],'key');return new Response('{"ok":true}');};assert.equal((await request('/api','token',{method:'POST',body:{},key:'key'})).ok,true);}finally{globalThis.fetch=old;}});

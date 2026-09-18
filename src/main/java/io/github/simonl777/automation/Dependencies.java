@@ -14,6 +14,7 @@ public class Dependencies {
  private final String model,sandbox,modelToken,sandboxToken;
  public Dependencies(@Value("${automation.model-url}")String model,@Value("${automation.sandbox-url}")String sandbox,@Value("${automation.model-token}")String mt,@Value("${automation.sandbox-token}")String st){this.model=base(model);this.sandbox=base(sandbox);this.modelToken=mt;this.sandboxToken=st;}
  private static String base(String value){URI u=URI.create(value);if(!Set.of("http","https").contains(u.getScheme())||u.getHost()==null||u.getUserInfo()!=null||u.getQuery()!=null)throw new IllegalStateException("Invalid dependency URL");return value.replaceAll("/$","");}
+ public JsonNode capability(String owner,Object input){return call(model+"/v1/capabilities",modelToken,owner,"POST",input,null,60);}
  public JsonNode plan(String owner,String requirement){return call(model+"/v1/plans",modelToken,owner,"POST",Map.of("requirement",requirement),null,55);}
  public JsonNode submit(String owner,String id,Object body){return call(sandbox+"/api/executions",sandboxToken,owner,"POST",body,"automation-"+id,15);}
  public JsonNode get(String owner,String id){validId(id);return call(sandbox+"/api/executions/"+id,sandboxToken,owner,"GET",null,null,10);}

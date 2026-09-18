@@ -1,14 +1,30 @@
-# Validation — 2026-09-18
+# v0.2 validation — 2026-09-18
 
-- Java 21 / Spring Boot local tests: 15 passed. Unit/contract database mode is H2.
-- Real deployment: Docker Compose on Linux x86_64 with managed Supabase PostgreSQL via TLS session pooler.
-- Deployment topology: two Supabase resources, four independently configured repositories; shared demo resources are logical separation, not four physical privilege boundaries.
-- Operator positive flow: requirement → structured Workflow → deterministic Spec → actual Playwright container → private Storage report → cleanup.
-- Deliberate assertion failure: failed result persisted and container removed; no duplicate run on idempotent submission.
-- Supabase user flow: verified JWT identity, immutable Workspace material, owner-scoped automation/execution, Storage download, result linkage; cross-owner read denied.
-- Model API: mock JSON and SSE tested; unauthorized model rejected. No live upstream model call is claimed.
-- Runtime changes verified on the Docker host: readable non-root artifacts, bounded container policy and explicit completion/cleanup states.
+## Local
 
-## Not claimed
+- Java suites: Sandbox 20, Model 26, Automation 23; all pass.
+- Four console test suites: 2 each. Four production builds pass.
+- Runner tests: 5 pass, including real HTTP fixture validation.
+- Existing deployment configuration suite: 11 pass.
 
-Real model-generation quality, public hostile-code isolation, distributed exactly-once execution, production capacity, live Git snapshot execution, and full UI form-submission automation are not part of this acceptance. The browser login page was rendered; the authenticated full chain was verified through its actual APIs. Private deployment addresses, credentials and run IDs remain outside the repository.
+## Real NAS + Supabase
+
+- Four consoles and three Java services deployed in Docker Compose with additive Flyway migrations.
+- Twelve case assets seeded: six Web and six API. All six API executions pass; five Web executions pass and the intentional missing-text assertion fails as expected.
+- Six screenshots and execution evidence written to private Supabase Storage. Stored PNG bytes verified; cross-owner reads for cases and artifacts denied.
+- AI CR, Markdown case generation, Web compilation and API compilation complete through the persistent task runtime and model gateway. Mock/fixture mode is displayed in the result.
+- Compiled workflow/spec hashes match actual Runner output.
+
+## Browser
+
+Reviewed the actual deployed pages through a loopback test transport that maps a synthetic test marker to the existing demo user's JWT, avoiding real credentials in UI traces. It does not modify production authentication.
+
+Verified: four-platform switch, API filter, case detail and deterministic compiled script, UI-triggered API execution, model playground response, Sandbox report and screenshot preview, DD findings/evidence, and saving an AI-SDLC compiled workflow to the case library. A saved case was read back from the database.
+
+## Boundaries
+
+Real-provider AI analysis, arbitrary hostile code isolation, full enterprise DD repository exploration, test-plan scheduling and broad external target coverage are not claimed. Provider/runtime settings are inspected in the console and configured by the deployment operator.
+
+## Deployment delta
+
+The product UI, Web/API runtime, case/review capabilities and sample runs above were deployed and verified. A subsequent bounded Storage network retry patch passed local tests but its final deployment was interrupted when SSH became unavailable. Runtime images continued serving the accepted v0.2 functionality. Treat this small reliability patch as source-verified until a fresh deployment is recorded.

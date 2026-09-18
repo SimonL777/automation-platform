@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jre-alpine
 RUN apk add --no-cache curl git && adduser -D -u 10001 app
 WORKDIR /app
 RUN mkdir -p /app/data && chown -R app:app /app/data
-COPY target/automation-platform-0.1.0.jar app.jar
+COPY target/automation-platform-0.2.0.jar app.jar
 RUN chmod 0444 /app/app.jar
 USER app
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=45 -XX:+ExitOnOutOfMemoryError -XX:ReservedCodeCacheSize=48m -Xss512k"
